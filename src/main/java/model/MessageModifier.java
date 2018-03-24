@@ -7,7 +7,9 @@ public class MessageModifier extends BaseMessage {
 	private int amount;
 	
 	public MessageModifier(String product, Operation operation, int amount){
+		this.setProduct(product);
 		this.operation = operation;
+		this.amount = amount;
 	}
 	
 	public Operation getOperation() {

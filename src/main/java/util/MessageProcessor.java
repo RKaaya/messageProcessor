@@ -17,11 +17,13 @@ public class MessageProcessor {
 			} else {
 				String operation = parts[0].toUpperCase();
 				String nums = parts[1].replaceAll(NOT_NUMBERS,"");
-				trade = new MessageModifier(parts[2], Operation.valueOf(operation), Integer.parseInt(nums));
+				String product = parts[2].substring(0, parts[2].length() - 1);
+				trade = new MessageModifier(product, Operation.valueOf(operation), Integer.parseInt(nums));
 			}
 		} else {
 			String nums = parts[5].replaceAll(NOT_NUMBERS,"");
-			trade = new MessageTrade(parts[3], Integer.parseInt(parts[0]), Integer.parseInt(nums));
+			String product = parts[3].substring(0, parts[3].length() - 1);
+			trade = new MessageTrade(product, Integer.parseInt(parts[0]), Integer.parseInt(nums));
 		}
 		return trade;
 	}
