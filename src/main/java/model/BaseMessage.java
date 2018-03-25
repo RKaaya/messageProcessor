@@ -2,6 +2,7 @@ package main.java.model;
 
 public abstract class BaseMessage {
 	private String product;
+	private double price;
 	
 	public String getProduct() {
 		return product;
@@ -9,5 +10,11 @@ public abstract class BaseMessage {
 	public void setProduct(String product) {
 		this.product = product;
 	}
-
+	public double getPrice() {
+		return price;
+	}
+	public void setPrice(double price) {
+		this.price = price;
+	}
+	
 }

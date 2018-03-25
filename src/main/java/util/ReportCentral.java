@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import main.java.enums.Operation;
 import main.java.model.MessageModifier;
 import main.java.model.MessageTrade;
 import main.java.model.Sale;
@@ -18,17 +19,20 @@ public class ReportCentral {
 		modifierMap = new HashMap<String, List<MessageModifier>>();
 	}
 	
-	public void addTrade(MessageTrade trade){
-		salesMap.putIfAbsent(trade.getProduct(), new Sale(0,0));
+	/**
+	   * This method add a sale.
+	   * @param trade This is the trade message to add
+	   */
+	public void addSale(MessageTrade trade){
+		salesMap.putIfAbsent(trade.getProduct(), new Sale());
 		Sale sale = salesMap.get(trade.getProduct());
-		int quantity = sale.getQuantity();
-		int price = sale.getPrice();
-		quantity += trade.getSale().getQuantity();
-		price += trade.getSale().getQuantity() * trade.getSale().getPrice();
-		sale.setQuantity(quantity);
-		sale.setPrice(price);
+		sale.addSale(trade.getQuantity(), trade.getPrice());
 	}
-	
+
+	/**
+	   * This method add a sale modifier.
+	   * @param modifier This is the modifier message to add
+	   */
 	public void addModifier(MessageModifier modifier){
 		modifierMap.putIfAbsent(modifier.getProduct(), new ArrayList<>());
 		List<MessageModifier> list = modifierMap.get(modifier.getProduct());
@@ -36,21 +40,25 @@ public class ReportCentral {
 		applyModifier(modifier);
 	}
 	
+	/**
+	   * This method apply a sale modifier.
+	   * @param modifier This is the modifier to apply to all sales
+	   */
 	private void applyModifier(MessageModifier modifier) {
 		Sale sale = salesMap.get(modifier.getProduct());
 		if(sale != null){
-		int price = sale.getPrice();
+		double price = sale.getPrice();
 		switch(modifier.getOperation()){
 			case ADD: {
-				price += sale.getQuantity() * modifier.getAmount();
+				price += sale.getQuantity() * modifier.getPrice();
 				break;
 			}
 			case SUBTRACT: {
-				price -= sale.getQuantity() * modifier.getAmount();
+				price -= sale.getQuantity() * modifier.getPrice();
 				break;
 			}
 			case MULTIPLY: {
-				price = price * modifier.getAmount();
+				price = price * modifier.getPrice();
 				break;
 			}
 		}
@@ -59,30 +67,41 @@ public class ReportCentral {
 		}
 	}
 	
+	/**
+	   * This method make a report from sales.
+	   * @return String This returns the sales report.
+	   */
 	public String getSalesReport(){
 		StringBuilder sb = new StringBuilder();
+		sb.append("Sales report:").append("\n");
 		for(Map.Entry<String, Sale> item : salesMap.entrySet()){
-			sb.append(item.getValue().getQuantity());
-			sb.append(" ");
-			sb.append(item.getKey());
-			sb.append(": ");
-			sb.append(item.getValue().getPrice()).append("p");
+			sb.append(item.getValue().getQuantity()).append(" ");
+			sb.append(item.getKey()).append(": ");
+			sb.append(item.getValue().getPrice()/100).append("p");
 			sb.append("\n");
 		}
 		return sb.toString();
 	}
 	
-	public String getAdjustReport(){
+	/**
+	   * This method make a report from modifiers.
+	   * @return String This returns the modifier report.
+	   */
+	public String getModifierReport(){
 		StringBuilder sb = new StringBuilder();
+		sb.append("Modifier report:").append("\n");
 		for(Map.Entry<String, List<MessageModifier>> item : modifierMap.entrySet()){
 			sb.append(item.getKey()).append(": \n");
 			for(MessageModifier mm : item.getValue()){
-				sb.append("\t").append(mm.getOperation()).append(": ").append(mm.getAmount()).append("\n");	
+				if(mm.getOperation().equals(Operation.MULTIPLY)){
+					sb.append("\t").append(mm.getOperation()).append(": ").append(mm.getPrice()).append("\n");
+				} else {
+					sb.append("\t").append(mm.getOperation()).append(": ").append(mm.getPrice()/100).append("p\n");
+				}
 			}
 			sb.append("\n");
 		}
 		return sb.toString();
 	}
-	
 	
 }
