@@ -1,6 +1,6 @@
 package main.java.messageCentral;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import main.java.model.BaseMessage;
@@ -21,7 +21,7 @@ public class MessageCentral {
 	private boolean active;
 	
 	public MessageCentral(){
-		archive = new ArrayList<BaseMessage>();
+		archive = new LinkedList<BaseMessage>();
 		reportCentral = new ReportCentral();
 		active = true;
 	}

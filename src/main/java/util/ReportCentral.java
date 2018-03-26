@@ -1,7 +1,7 @@
 package main.java.util;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -34,7 +34,7 @@ public class ReportCentral {
 	   * @param modifier This is the modifier message to add
 	   */
 	public void addModifier(MessageModifier modifier){
-		modifierMap.putIfAbsent(modifier.getProduct(), new ArrayList<>());
+		modifierMap.putIfAbsent(modifier.getProduct(), new LinkedList<>());
 		List<MessageModifier> list = modifierMap.get(modifier.getProduct());
 		list.add(modifier);
 		applyModifier(modifier);
